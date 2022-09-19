@@ -4,13 +4,14 @@ SCRIPT
 
 Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/jammy64"
+  config.vm.synced_folder ".", "/vagrant", disabled: true
   config.vm.provider "virtualbox" do |v|
     v.memory = 8092
     v.cpus = 2
   end
-  config.vm.define "cr1" do |br1config|
-    br1config.vm.network "private_network", ip: "192.168.60.200"
-    br1config.vm.provision "docker" do |d|
+  config.vm.define "cr1" do |cr_config|
+    cr_config.vm.network "private_network", ip: "192.168.60.200"
+    cr_config.vm.provision "docker" do |d|
       d.post_install_provision "shell", inline: $script
       d.run "caprover/caprover-edge", args: "-e MAIN_NODE_IP_ADDRESS=192.168.60.200 -e BY_PASS_PROXY_CHECK=TRUE -p 80:80 -p 443:443 -p 3000:3000 -v /var/run/docker.sock:/var/run/docker.sock -v /captain:/captain"
     end
