@@ -2,7 +2,7 @@
 
 h2 is a heroku like PaaS for IQSS at Harvard University.
 
-h2 originates from issue #DevOpsProjects/795
+h2 originates from issue epic `#DevOpsProjects/795` ["Build and release Heroku replacement H2"](https://github.com/hmdc/DevOpsProjects/issues/795)
 
 ## directory structure
 
