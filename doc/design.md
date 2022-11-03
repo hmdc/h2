@@ -6,7 +6,7 @@
 
 ## Synopsis
 
-* IQSS provides qualified Harvard-affiliated customers access to a Heroku enterprise account subscription by request.
+* IQSS provides qualified Harvard-affiliated customers access to a [Heroku](https://www.heroku.com) enterprise account subscription by request.
 
 * Heroku is a platform as a service (PaaS).
 
@@ -23,18 +23,38 @@
   
 * I intend to host all virtual environments on [NERC's OpenStack platform](https://nerc.mghpcc.org/).
 
-* IQSS will be able to maintain the same level of access and usage control over customer projects or assigned resources provided by Heroku in the new Caprover environments:
+* IQSS will be able to maintain the same level of access and usage control over customer projects or assigned resources provided by Heroku in the new Caprover environments because:
   * NERC is fully integrated into Harvard Key which will permit a seamless login (authentication) experience for Heroku users.[^heroku-has-harvard-key]
   * In addition, NERC hosts a *ColdFront* installation which manages usage and access to OpenStack resources on the basis of a project group sponsored by a principal investigator or equivalent role (PIE).
   * As all Heroku projects require sponsorship by PIE as well, I can map all Grouper[^grouper] access controls to ColdFront access controls to ensure continuity of authorization: Users in a project group on Heroku will be able to perform equivalent actions on their Caprover project limited by their access scope within the project.
 
-## Running H2 in development *WIP*
+## Architecture
+
+* Any PIE can request an account on H2.  
+* Each project migrated from Heroku to H2 will appear as a project in ColdFront.
+  * Coldfront permits limiting access to consumable resources like cpu and memory in OpenStack 
+
+
+## Development pipeline
+
+### Versioning
+
+### Running H2 in development *WIP*
 
 * As of 10/24/2022, the H2 dev environment consists of 1 caprover node. [^fixme-1]
 * Install [VirtualBox](https://www.virtualbox.org/) and [Vagrant](https://www.vagrantup.com/docs/provisioning/docker)
 * Follow instructions in the repository: <https://github.com/hmdc/h2/tree/main/test/caprover>
 
-## Resources required per project in production
+### Pipeline visualization
+
+* I want to be able to make modifications to the base image metadata for an H2 virtual machine in GitHub and said modification should trigger an action to package that image as a Vagrant image, and subsequently an OpenStack image.
+* Upon rendering the Vagrant image, H2's CI should test that after changes, a demo environment is still functional. FIXME: This test has yet to be defined.
+* Upon success, H2 CI should upload OpenStack image to NERC directly and release virtual machine images as artifacts on GitHub versioned.
+
+```
+```
+
+## "Production" requirements
 
 ### Wildcard domains
 
