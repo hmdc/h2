@@ -10,6 +10,8 @@
 
 * Heroku is a platform as a service (PaaS).
 
+* Active demo: https://captain.server.demo.caprover.com/#/apps/details/demo-nodejs
+
 * A PaaS allows developers to quickly self-publish web applications/sites by subtracting from developer or institutional consideration everything unrelated to development: Heroku manages all physical and virtual servers, security patching, updates, monitoring, and operational checks. However, it is closed source and cost-prohibitive.
   
 * [Caprover](https://github.com/caprover/caprover) is a open source PaaS developed and financially supported by an active community.
@@ -125,15 +127,13 @@ configure it to use the wildcard certificate `*.project_name.h2.hmdc.harvard.edu
 
 Build a workflow which can execute the following function:
 
-1. Given a project name, create wildcard SSL certificates for projects, create appropriate CNAME, and deploy a Caprover/H2 cluster: [^todo-create-coldfront-resources-for-pie]
+1. Given a project name, create wildcard SSL certificates for projects, create appropriate CNAME, and deploy a Caprover/H2 cluster:[^todo-create-coldfront-resources-forpie]
 
-[^todo-ingestion-form]: 
+[^todo-ingestion-form]:
 
-[^todo-ingestion-security-review]: 
-
-[^todo-create-coldfront-resources-for-pie]: 
-
-[^detail-wildcard-domain]: 
+[^todo-ingestion-security-review]:
+[^todo-create-coldfront-resources-forpie]:
+[^detail-wildcard-domain]:
 
 [^detail-terraform-set-cname-to-lb-or-instance-group]: 
 
@@ -144,3 +144,15 @@ Build a workflow which can execute the following function:
 [^todo-migrate-customers-from-heroku]: 
 
 [^todo-create-h2-development-cluster]: 
+
+[^todo-heroku-to-caprover-app-transition-pipeline]: 
+
+[^todo-which-artifacts-should-be-included]: 
+
+[^todo-qa-process]: 
+
+[^todo-build-developer-workflow]: 
+
+[^todo-build-developer-environment]: 
+
+[^todo-should-images-update-clusters]: 
