@@ -41,8 +41,10 @@
 * Each project migrated from Heroku to H2 will appear as a project in ColdFront. [^todo-create-coldfront-resources-for-pie]
   * Coldfront permits limiting access to consumable resources like cpu and memory in OpenStack.
 * Each PIE will be assigned an OpenStack resource allocation on Coldfront.
+  * HMDC Ops will have access to these resources for purposes of deployment, maintenance, and troubleshooting. [^todo-ops-access]
 * Each PIE will be assigned a wildcard domain: `*.project_name.h2.hmdc.harvard.edu` such that any subdomain of `project_name.h2.hmdc.harvard.edu` will CNAME to PIE's H2 installation [^detail-wildcard-domain]
 * A wildcard SSL certificate for `*.project_name.h2.hmdc.harvard.edu` will be generated.
+* Terraform will be used for infrastructure deployment. This might be done manually by HMDC Ops, but ideally would be automated in some system TBD. [^todo-terraform-automation]
 * Terraform state will reside on GitLab or OpenStack storage [^todo-terraform-state-management]
 * Terraform will onboard PIE onto OpenStack with minimal to no permissions to access/mutate infrastructure in project but maximal permissions inside docker swarm caprover. [^todo-create-minimal-user-access]
 * Terraform will provision an immutable Caprover environment on OpenStack within the PIE's OpenStack environment,
@@ -71,6 +73,7 @@ configure it to use the wildcard certificate `*.project_name.h2.hmdc.harvard.edu
   * Backups
 
     * Backups of cluster state should be taken frequently and stored for some duration.
+    * The backup process for database addons must ensure that the database is consistent and in a recoverable state.[^todo-database-backups]
     * Ideally, backups can be restored by customer and cluster can be restored to any point.[^todo-backup-and-restore]
 
   * Updating images
@@ -85,10 +88,14 @@ configure it to use the wildcard certificate `*.project_name.h2.hmdc.harvard.edu
   * Scanning
 
     * All docker containers deployed to Caprover cluster, including Caprover itself, should be routinely inspected for vulnerabilities via an automated process.
-    * All hosts should be virus scanned and secured by CrowdStrike Falcon agent. [^todo-virus-scan-and-crowdstrike-config]
+    * All hosts should be virus scanned and secured against malware execition by running CrowdStrike Falcon agent. [^todo-virus-scan-and-crowdstrike-config]
     * Vulnerability scanners should also scan open ports/services on the Caprover cluster.
-    * Results should be delivered to customer. Automated resolution can be considered, but, in most cases I expect that customer's software stacks are fragile. Resolution of maintenance issues that require downtime require an unitial stake in the ground. [^todo-scanning] [^todo-customer-security-remediation-policy]
-  
+    * Results should be delivered to customer. Automated resolution can be considered, but, in most cases I expect that customer's software stacks are fragile. Resolution of maintenance issues that require downtime require an initial stake in the ground. [^todo-scanning] [^todo-customer-security-remediation-policy]
+
+  * Confidentiality
+
+    * NERC supports up to DSL 2. Applications requiring DSL 3 security might need to be deployed to Caprover clusters on AWS accounts instead. [^todo-dsl3]
+
 ## Development and release pipelines
 
 ### Running H2 in development *WIP*
@@ -143,10 +150,12 @@ configure it to use the wildcard certificate `*.project_name.h2.hmdc.harvard.edu
 [^todo-ingestion-form]: x
 [^todo-ingestion-security-review]: x
 [^todo-create-coldfront-resources-for-pie]: x
+[^todo-ops-access]: x
 [^detail-wildcard-domain]: x
 [^detail-terraform-set-cname-to-lb-or-instance-group]: x
 [^todo-onboarding-welcome]: x
 [^todo-determine-backup-policy-addons]: x
+[^todo-relationship-to-nerc]: x
 [^todo-migrate-customers-from-heroku]: x
 [^todo-create-h2-development-cluster]: x
 [^todo-heroku-to-caprover-app-transition-pipeline]: x
@@ -157,11 +166,14 @@ configure it to use the wildcard certificate `*.project_name.h2.hmdc.harvard.edu
 [^todo-should-images-update-clusters]: x
 [^todo-scaling-1to1-proj-openstack]: x
 [^todo-customer-security-remediation-policy]: x
+[^todo-dsl3]: x
 [^todo-workflow-update-image]: x
 [^todo-create-minimal-user-access]: x
 [^todo-scanning]: x
 [^todo-workflow-update-cluster]: x
+[^todo-terraform-automation]: x
 [^todo-terraform-state-management]: x
+[^todo-database-backups]: x
 [^todo-backup-and-restore]: x
 [^todo-create-service-accounts]: x
 [^todo-virus-scan-and-crowdstrike-config]: x
