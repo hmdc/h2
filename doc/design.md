@@ -10,7 +10,7 @@
 
 * Heroku is a platform as a service (PaaS).
 
-* Active demo: https://captain.server.demo.caprover.com/#/apps/details/demo-nodejs
+* Active demo: <https://captain.server.demo.caprover.com/#/apps/details/demo-nodejs>
 
 * A PaaS allows developers to quickly self-publish web applications/sites by subtracting from developer or institutional consideration everything unrelated to development: Heroku manages all physical and virtual servers, security patching, updates, monitoring, and operational checks. However, it is closed source and cost-prohibitive.
   
@@ -21,7 +21,7 @@
   * Single user
   * Frontend and Caprover api server written in TypeScript
 
-* I will replace the functionality of Heroku enterprise by building a Caprover virtual environment for each project currently hosted on Heroku: **H2** for short. 
+* I will replace the functionality of Heroku enterprise by building a Caprover virtual environment for each project currently hosted on Heroku: **H2** for short.
   
 * I intend to host all virtual environments on [NERC's OpenStack platform](https://nerc.mghpcc.org/).
 
@@ -43,41 +43,52 @@
 * Each PIE will be assigned an OpenStack resource allocation on Coldfront.
 * Each PIE will be assigned a wildcard domain: `*.project_name.h2.hmdc.harvard.edu` such that any subdomain of `project_name.h2.hmdc.harvard.edu` will CNAME to PIE's H2 installation [^detail-wildcard-domain]
 * A wildcard SSL certificate for `*.project_name.h2.hmdc.harvard.edu` will be generated.
-* Terraform will provision a Caprover environment on OpenStack within the PIE's OpenStack environment and
+* Terraform state will reside on GitLab or OpenStack storage [^todo-terraform-state-management]
+* Terraform will onboard PIE onto OpenStack with minimal to no permissions to access/mutate infrastructure in project but maximal permissions inside docker swarm caprover. [^todo-create-minimal-user-access]
+* Terraform will provision an immutable Caprover environment on OpenStack within the PIE's OpenStack environment,
 configure it to use the wildcard certificate `*.project_name.h2.hmdc.harvard.edu`.
 * Terraform will set the appropriate CNAME from `*.project_name.h2.hmdc.harvard.edu` to Caprover instances[^detail-terraform-set-cname-to-lb-or-instance-group]
+* Terraform will provision the appropriate service accounts which will provide HMDC with administrative access over customer clusters.[^todo-create-service-accounts] [^todo-scaling-1to1-proj-openstack]
+* Terraform will onboard PIE onto OpenStack with minimal permissions to access, mutate infrastructure but maximal permissions inside docker swarm caprover. [^todo-create-minimal-user-access]
 * An e-mail and/or notification will be sent to PIE, organization that H2 cluster is provisioned.[^todo-onboarding-welcome]
 
 ### Add-on applications maintenace
 
 * As in Heroku, customers can deploy add-ons like databases. While I want to allow users to choose any database they would like, I want us to only officially support the following: PostgreSQL and MongoDB. [^todo-determine-addon-requirements]
   
-* These add-ons should be treated as critical components and backed up when necessary. [^todo-determine-backup-policy-addons]
+* These add-ons should be treated as critical components and backed up when necessary.[^todo-determine-backup-policy-addons]
   
 ### Maintaing a relationship with NERC
 
 * Conforming to all NERC regulations
+* Meet regularly
 * Maintain awareness about NERC maintenance schedules and downtime. [^todo-relationship-to-nerc]
   
 ### Maintenance, security
 
 * Each customers' cluster is subject to ongoing security measures which operate on routine or continuous basis.
 
+  * Backups
+
+    * Backups of cluster state should be taken frequently and stored for some duration.
+    * Ideally, backups can be restored by customer and cluster can be restored to any point.[^todo-backup-and-restore]
+
+  * Updating images
+
+    * Base images should be updated on a routine basis with the latest patches as part of the development and release pipeline.[^todo-workflow-update-image]
+
   * Patching
 
     * Before patching, a workflow should take a backup of the Caprover cluster through Caprover's backup mechanisms
-    * All host operating systems in every cluster should be updated via `yum -y upgrade` at the host-os level.  [^todo-workflow-update-cluster]
+    * All host instances in every cluster should be reprovisioned with latest image[^todo-workflow-update-cluster] **prefrably, but not necessarily** via 0-downtime, rolling mechanism.
 
   * Scanning
 
     * All docker containers deployed to Caprover cluster, including Caprover itself, should be routinely inspected for vulnerabilities via an automated process.
+    * All hosts should be virus scanned and secured by CrowdStrike Falcon agent. [^todo-virus-scan-and-crowdstrike-config]
     * Vulnerability scanners should also scan open ports/services on the Caprover cluster.
-    * Results should be delivered to customer. Automated resolutuon can be considered, but, in most cases I expect that customer's software stacks are fragile. Resolution of maintenance issues that require downtime require an unitial stake in the ground. [^todo-scanning] [^todo-customer-security-remediation-policy]
+    * Results should be delivered to customer. Automated resolution can be considered, but, in most cases I expect that customer's software stacks are fragile. Resolution of maintenance issues that require downtime require an unitial stake in the ground. [^todo-scanning] [^todo-customer-security-remediation-policy]
   
-  * Updating images
-
-    * Base images should be updated on a routine basis with the latest patches as part of the development and release pipeline. [^todo-workflow-update-image]
-
 ## Development and release pipelines
 
 ### Running H2 in development *WIP*
@@ -93,7 +104,7 @@ configure it to use the wildcard certificate `*.project_name.h2.hmdc.harvard.edu
   * For small installations, instances can assume both roles.
 * Once the Vagrant image has been created, it will be tested with a sample application in a sample VirtualBox cluster to determine whether updating the base image in production will have any negative affects.
 * If successful, Vagrant will update the image in NERC, such that any new deployments will use new virtual machine images.
-* Should we assume that every customers environment should also be rebuilt upon image update? It would be ideal, but perhaps difficult to accomplish without customer involvement in the process. [^todo-should-images-update-clusters] 
+* Should we assume that every customers environment should also be rebuilt upon image update? Yes [^todo-should-images-update-clusters]
 
 ### Pipeline B: Development and testing new features
 
@@ -105,9 +116,9 @@ configure it to use the wildcard certificate `*.project_name.h2.hmdc.harvard.edu
 
 * Releases will be built from `canary` and `stable` based on timestamp versioning and will contain virtual machine images, docker containers, and npm package as artifacts. [^todo-which-artifacts-should-be-included]
 
-## Migration and plan
+## Migration and development plan
 
-### Synopsis
+### Goal
 
 * I want to move every application from Heroku to Caprover in OpenStack.
 
@@ -119,40 +130,41 @@ configure it to use the wildcard certificate `*.project_name.h2.hmdc.harvard.edu
 
 #### Duplicate `evalue.hmdc.harvard.edu`
 
-* evalue.hmdc.harvard.edu resides on Heroku and is a simple application developed by a researcher who no longer works at Harvard. We are maintaining an ancient version of this website by request as it is still heavily used by the researcher's community. 
+* evalue.hmdc.harvard.edu resides on Heroku and is a simple application developed by a researcher who no longer works at Harvard. We are maintaining an ancient version of this website by request as it is still heavily used by the researcher's community.
   
-* My stake: Migrating this application onto an H2 cluster by EOY Y22 (with shortcuts) to determine overall techncal feasibility.
+* My stake: Migrating this application onto an H2 cluster by EOY Y22 (with shortcuts) to determine overall techncal feasibility.[^todo-y22-q4-goal]
 
 ### Y23 Q1
 
-Build a workflow which can execute the following function:
+#### Build H2 deployment workflow
 
-1. Given a project name, create wildcard SSL certificates for projects, create appropriate CNAME, and deploy a Caprover/H2 cluster:[^todo-create-coldfront-resources-forpie]
+* Given tuple `(PIE,project_name)` produce an H2 cluster for PIE[^todo-y23-q1-goal]
 
-[^todo-ingestion-form]:
-
-[^todo-ingestion-security-review]:
-[^todo-create-coldfront-resources-forpie]:
-[^detail-wildcard-domain]:
-
-[^detail-terraform-set-cname-to-lb-or-instance-group]: 
-
-[^todo-onboarding-welcome]: 
-
-[^todo-determine-backup-policy-addons]: 
-
-[^todo-migrate-customers-from-heroku]: 
-
-[^todo-create-h2-development-cluster]: 
-
-[^todo-heroku-to-caprover-app-transition-pipeline]: 
-
-[^todo-which-artifacts-should-be-included]: 
-
-[^todo-qa-process]: 
-
-[^todo-build-developer-workflow]: 
-
-[^todo-build-developer-environment]: 
-
-[^todo-should-images-update-clusters]: 
+[^todo-ingestion-form]: x
+[^todo-ingestion-security-review]: x
+[^todo-create-coldfront-resources-for-pie]: x
+[^detail-wildcard-domain]: x
+[^detail-terraform-set-cname-to-lb-or-instance-group]: x
+[^todo-onboarding-welcome]: x
+[^todo-determine-backup-policy-addons]: x
+[^todo-migrate-customers-from-heroku]: x
+[^todo-create-h2-development-cluster]: x
+[^todo-heroku-to-caprover-app-transition-pipeline]: x
+[^todo-which-artifacts-should-be-included]: x
+[^todo-qa-process]: x
+[^todo-build-developer-workflow]: x
+[^todo-build-developer-environment]: x
+[^todo-should-images-update-clusters]: x
+[^todo-scaling-1to1-proj-openstack]: x
+[^todo-customer-security-remediation-policy]: x
+[^todo-workflow-update-image]: x
+[^todo-create-minimal-user-access]: x
+[^todo-scanning]: x
+[^todo-workflow-update-cluster]: x
+[^todo-terraform-state-management]: x
+[^todo-backup-and-restore]: x
+[^todo-create-service-accounts]: x
+[^todo-virus-scan-and-crowdstrike-config]: x
+[^todo-y23-q1-goal]: x
+[^todo-y22-q4-goal]: x
+[^todo-determine-addon-requirements]: x
