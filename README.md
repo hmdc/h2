@@ -6,7 +6,7 @@ h2 originates from issue epic `#DevOpsProjects/795` ["Build and release Heroku r
 
 ## Index
 
-* [[1-deploying-h2-nerc-openstack]]
+* [Deploying the H2 demo to NERC OpenStack](doc/src/1-deploying-h2-nerc-openstack.md)
 
 ## Directory structure
 
