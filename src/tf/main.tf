@@ -14,17 +14,33 @@ resource "aws_dynamodb_table" "h2env" {
   hash_key     = "PK" # partition key
   range_key    = "SK" # sort key
 
-  # Partition Key.
   attribute {
     name = "PK"
     type = "S"
   }
 
-  # Sort Key (datetime in UTC).
   attribute {
     name = "SK"
     type = "S"
   }
+
+  attribute {
+    name = "gs1pk"
+    type = "S"
+  }
+
+  attribute {
+    name = "gs1sk"
+    type = "S"
+  }
+
+  global_secondary_index {
+    name            = "gs1"
+    hash_key        = "gs1pk"
+    range_key       = "gs1sk"
+    projection_type = "ALL"
+  }
+
 }
 
 
