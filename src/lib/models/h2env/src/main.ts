@@ -29,7 +29,11 @@ const H2Schema = {
       gs1pk: { type: String, value: 'env#' },
       gs1sk: { type: String, value: 'env#${owner}${id}' },
     }
-  } as const
+  } as const,
+  params: {
+    isoDates: true,
+    timestamps: true
+  }
 };
 
 const table = new Table({
