@@ -17,6 +17,8 @@ const H2Schema = {
   indexes: {
     primary: { hash: 'PK', sort: 'SK' },
     gs1: { hash: 'gs1pk', sort: 'gs1sk', project: ['gs1pk', 'gs1sk'] },
+    gs2: { hash: 'gs2pk', sort: 'gs2sk', project: ['gs2pk', 'gs2sk'] },
+    ls1: { sort: 'id', type: 'local' },
   },
   models: {
     Env: {
@@ -24,10 +26,13 @@ const H2Schema = {
       SK: { type: String, value: 'env#' },
       id: { type: String, generate: 'ulid', validate: /^[0123456789ABCDEFGHJKMNPQRSTVWXYZ]{26}$/i },
       owner: { type: String, required: true },
+      subnet: { type: Number, required: true },
       tracking: { type: Array, items: { type: String, validate: /(?:https?):\/\/(\w+:?\w*)?(\S+)(:\d+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/ }, required: true },
       status: { type: String, required: true, default: 'onboarding', enum: ['active', 'onboarding', 'ended'] },
       gs1pk: { type: String, value: 'env#' },
       gs1sk: { type: String, value: 'env#${owner}${id}' },
+      gs2pk: { type: String, value: 'env#' },
+      gs2sk: { type: Number, value: '${subnet}' }
     }
   } as const,
   params: {
@@ -43,4 +48,4 @@ const table = new Table({
   schema: H2Schema,
 });
 
-export default Table;
+export default table;

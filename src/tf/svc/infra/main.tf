@@ -34,6 +34,21 @@ resource "aws_dynamodb_table" "h2env" {
     type = "S"
   }
 
+  attribute {
+    name = "gs2pk"
+    type = "S"
+  }
+
+  attribute {
+    name = "id"
+    type = "S"
+  }
+
+  attribute {
+    name = "gs2sk"
+    type = "N"
+  }
+
   global_secondary_index {
     name            = "gs1"
     hash_key        = "gs1pk"
@@ -41,8 +56,24 @@ resource "aws_dynamodb_table" "h2env" {
     projection_type = "ALL"
   }
 
+  global_secondary_index {
+    name            = "gs2"
+    hash_key        = "gs2pk"
+    range_key       = "gs2sk"
+    projection_type = "ALL"
+  }
+
+  local_secondary_index {
+    name            = "ls1"
+    range_key       = "id"
+    projection_type = "ALL"
+  }
+
 }
 
+resource "aws_route53_zone" "primary" {
+  name = "h2.hmdc.harvard.edu"
+}
 
 provider "aws" {
   region = "us-east-1"
