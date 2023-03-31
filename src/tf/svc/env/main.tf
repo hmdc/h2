@@ -24,3 +24,6 @@ provider "aws" {
   region = "us-east-1"
 }
 
+provider "openstack" {
+  cloud = "nerc"
+}

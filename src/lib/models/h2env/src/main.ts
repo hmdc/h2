@@ -27,6 +27,7 @@ const H2Schema = {
       id: { type: String, generate: 'ulid', validate: /^[0123456789ABCDEFGHJKMNPQRSTVWXYZ]{26}$/i },
       owner: { type: String, required: true },
       subnet: { type: Number, required: true },
+      cidr: { type: String, required: true },
       tracking: { type: Array, items: { type: String, validate: /(?:https?):\/\/(\w+:?\w*)?(\S+)(:\d+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/ }, required: true },
       status: { type: String, required: true, default: 'onboarding', enum: ['active', 'onboarding', 'ended'] },
       gs1pk: { type: String, value: 'env#' },
