@@ -90,7 +90,7 @@ resource "aws_route53_record" "env" {
 
 resource "openstack_compute_instance_v2" "srv" {
   name        = local.__envid
-  image_id    = "48d5beed-77ee-4a84-8686-1981e61c9d2f"
+  image_id    = "a300978c-7c2d-4bf5-a326-87767513b85f"
   flavor_name = "cpu-a.2"
   key_pair    = "test1"
   user_data   = <<-EOT
