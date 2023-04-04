@@ -32,11 +32,13 @@ touch /etc/h2.env
 cat <<EOF >/etc/systemd/system/caprover.service
 [Unit]
 After=network.target
+After=cloud-final.service
 [Service]
 EnvironmentFile=/etc/h2.env
 ExecStart=/bin/sh -c "/usr/bin/docker run -e MAIN_NODE_IP_ADDRESS=\${MAIN_NODE_IP_ADDRESS} -e BY_PASS_PROXY_CHECK='TRUE' -p 80:80 -p 443:443 -p 3000:3000 -v /var/run/docker.sock:/var/run/docker.sock -v /captain:/captain docker.io/caprover/caprover-edge:latest"
 [Install]
 WantedBy=default.target
+WantedBy=cloud-init.target
 EOF
 
 chmod 664 /etc/systemd/system/caprover.service
