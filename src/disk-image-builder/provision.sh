@@ -24,7 +24,8 @@ apt-get -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin
 docker pull docker.io/caprover/caprover-edge:latest &
 docker pull caprover/netdata &
 docker pull caprover/certbot-sleeping &
-docker pull caprover-placeholder-app &
+docker pull caprover/caprover-placeholder-app &
+docker pull nginx:1 &
 wait
 touch /etc/h2.env
 # FIXME: Use source image filter?

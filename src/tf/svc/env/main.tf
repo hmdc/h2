@@ -5,7 +5,8 @@ variable "envid" {
 }
 
 locals {
-  __envid = replace(var.envid, "_", "#")
+  __envid      = replace("${var.envid}", "_", "#")
+  __envid_host = replace("${var.envid}", "_", "-")
 }
 
 # Grab environment id from table. This should be initiated from CI somewhere.
@@ -81,7 +82,7 @@ resource "openstack_networking_floatingip_associate_v2" "floatip_1" {
 // MAIN_NODE_IP_ADDRESS
 resource "aws_route53_record" "env" {
   zone_id = data.aws_route53_zone.h2.zone_id
-  name    = "*.${var.envid}"
+  name    = "*.${local.__envid_host}"
   type    = "A"
   ttl     = 5
 
@@ -90,7 +91,7 @@ resource "aws_route53_record" "env" {
 
 resource "openstack_compute_instance_v2" "srv" {
   name        = local.__envid
-  image_id    = "a300978c-7c2d-4bf5-a326-87767513b85f"
+  image_id    = "ea3437e8-b7c9-485c-8704-64803744af52"
   flavor_name = "cpu-a.2"
   key_pair    = "test1"
   user_data   = <<-EOT
