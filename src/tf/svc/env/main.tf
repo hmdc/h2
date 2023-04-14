@@ -75,7 +75,7 @@ resource "openstack_networking_floatingip_v2" "floatip_1" {
 }
 
 resource "openstack_networking_floatingip_associate_v2" "floatip_1" {
-  floating_ip = openstack_networking_floatingip_v2.floatip_1.fixed_ip
+  floating_ip = openstack_networking_floatingip_v2.floatip_1.address
   port_id     = openstack_networking_port_v2.subnet_1.id
 }
 
